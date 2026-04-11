@@ -1,0 +1,39 @@
+@import "tailwindcss";
+@tailwind utilities;
+
+@layer utilities {
+  .animate-fadeIn {
+    animation: fadeIn 0.5s ease-out forwards;
+  }
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Custom scrollbar for WebKit browsers */
+  .styled-scrollbar::-webkit-scrollbar {
+    width: 8px;
+  }
+  .styled-scrollbar::-webkit-scrollbar-track {
+    background: #f1f5f9; /* slate-100 */
+    border-radius: 10px;
+  }
+  .styled-scrollbar::-webkit-scrollbar-thumb {
+    background: #94a3b8; /* slate-400 */
+    border-radius: 10px;
+  }
+  .styled-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #64748b; /* slate-500 */
+  }
+  /* For Firefox */
+  .styled-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: #94a3b8 #f1f5f9;
+  }
+}

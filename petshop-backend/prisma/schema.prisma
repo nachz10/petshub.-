@@ -1,0 +1,339 @@
+  datasource db {
+    provider = "mysql"
+    url      = env("DATABASE_URL")
+  }
+
+  generator client {
+    provider = "prisma-client-js"
+  }
+
+  model Users {
+    id        String   @id @default(uuid())
+    email     String   @unique
+    fullName  String
+    password  String 
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    isAdmin   Boolean  @default(false)
+    PasswordReset PasswordResetToken?
+    pets          Pet[]
+    orders Order[]
+    supportChats    SupportChat[]
+    sentSupportMessages SupportMessage[]
+
+    Cart Cart[]
+    addresses      Address[]
+    reviews ProductReview[]
+  }
+
+  model EmailVerification {
+    id        String   @id @default(uuid())
+    email     String   @unique
+    code      String
+    expiresAt DateTime
+    createdAt DateTime @default(now())
+  }
+
+  model PasswordResetToken {
+    id        String   @id @default(uuid())
+    token     String   @unique
+    userId    String   @unique
+    user      Users    @relation(fields: [userId], references: [id], onDelete: Cascade)
+    expiresAt DateTime
+    createdAt DateTime @default(now())
+  }
+
+  model Products {
+    id             String    @id @default(uuid())
+    name           String
+    description    String? @db.Text
+    price          Decimal   @db.Decimal(10,2)
+    availableUnits Int       @default(0)
+    isFeatured     Boolean   @default(false)
+    freeShipping   Boolean   @default(false)
+    returnPolicy   Boolean   @default(false)
+    createdAt      DateTime  @default(now())
+    updatedAt      DateTime  @updatedAt
+    categoryId String
+    category   Categories @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+    policies Policies[]
+    images       ProductImage[]
+
+    CartItems CartItems[]
+    productType       ProductType         @relation(fields: [productTypeId], references: [id])
+    productTypeId     String
+    animalTargets     ProductAnimalTarget[]
+    attributes        ProductAttribute[]
+    reviews ProductReview[]
+  }
+
+  model ProductReview {
+  id        String   @id @default(uuid())
+  rating    Int      
+  comment   String?  @db.Text
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  productId String
+  product   Products @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  userId String
+  user   Users    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  @@unique([userId, productId])
+}
+
+  model ProductImage {
+    id        String   @id @default(uuid())
+    url       String
+    isPrimary Boolean  @default(false)
+    product   Products  @relation(fields: [productId], references: [id], onDelete: Cascade)
+    productId String
+    createdAt DateTime @default(now())
+}
+
+  model Categories {
+    id          String    @id @default(uuid())
+    name        String    @unique
+    isFeatured     Boolean   @default(false)
+    showInNav   Boolean?  @default(false)
+    description String?
+    imageUrl    String @default("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRORrnYNXXa9Q3rLN4OHi0yGJLKVfDGycFQSg&s")
+    products    Products[]
+  }
+
+  model Policies {
+    id          String    @id @default(uuid())
+    productId   String
+    product     Products @relation(fields: [productId], references: [id], onDelete: Cascade)
+    policyType  String
+    description String
+    duration    Int?
+  }
+
+  model CartItems {
+    id        String   @id @default(uuid())
+    productId String
+    product   Products @relation(fields: [productId], references: [id], onDelete: Cascade)
+    quantity  Int
+    price     Decimal  @db.Decimal(10,2)
+    addedAt   DateTime @default(now())
+    cart      Cart     @relation(fields: [cartId], references: [id], onDelete: Cascade)
+    cartId    String
+  }
+
+  model Cart {
+    id        String     @id @default(uuid())
+    userId    String
+    user      Users      @relation(fields: [userId], references: [id], onDelete: Cascade)
+    items     CartItems[]
+    createdAt DateTime   @default(now())
+    updatedAt DateTime   @updatedAt
+  }
+
+  model Address {
+    id       String @id @default(uuid())
+    userId   String
+    user     Users  @relation(fields: [userId], references: [id], onDelete: Cascade)
+    street   String
+    city     String
+    state    String
+    zipCode  String
+    country  String
+    isDefault Boolean @default(false)
+  }
+
+  model ProductType {
+    id          String     @id @default(uuid())
+    name        String     @unique
+    description String?    @db.Text
+    products    Products[]
+    attributes  ProductTypeAttribute[]
+    createdAt   DateTime   @default(now())
+    updatedAt   DateTime   @updatedAt
+  }
+
+  model ProductTypeAttribute {
+    id            String      @id @default(uuid())
+    productTypeId String
+    productType   ProductType @relation(fields: [productTypeId], references: [id], onDelete: Cascade)
+    name          String 
+    description   String?     @db.Text
+    isRequired    Boolean     @default(false)
+    createdAt     DateTime    @default(now())
+    updatedAt     DateTime    @updatedAt
+
+    @@unique([productTypeId, name])
+  }
+
+  model ProductAttribute {
+    id         String   @id @default(uuid())
+    productId  String
+    product    Products @relation(fields: [productId], references: [id], onDelete: Cascade)
+    name       String 
+    value      String   @db.Text
+    createdAt  DateTime @default(now())
+    updatedAt  DateTime @updatedAt
+
+    @@unique([productId, name])
+  }
+
+  model AnimalType {
+    id                   String                 @id @default(uuid())
+    name                 String                 @unique
+    description          String?                @db.Text
+    imageUrl             String?
+    productAnimalTargets ProductAnimalTarget[]
+    createdAt            DateTime               @default(now())
+    updatedAt            DateTime               @updatedAt
+  }
+
+  model ProductAnimalTarget {
+    id           String     @id @default(uuid())
+    productId    String
+    product      Products   @relation(fields: [productId], references: [id], onDelete: Cascade)
+    animalTypeId String
+    animalType   AnimalType @relation(fields: [animalTypeId], references: [id], onDelete: Cascade)
+    createdAt    DateTime   @default(now())
+    updatedAt    DateTime   @updatedAt
+
+    @@unique([productId, animalTypeId])
+  }
+
+  model Veterinarian {
+    id          String   @id @default(uuid())
+    fullName    String
+    speciality  String?
+    bio         String?  @db.Text
+    imageUrl    String?
+    isAvailable Boolean  @default(true)
+    createdAt   DateTime @default(now())
+    updatedAt   DateTime @updatedAt
+    
+    schedules   VetSchedule[]
+    appointments Appointment[]
+  }
+
+  model VetSchedule {
+    id            String   @id @default(uuid())
+    vetId         String
+    veterinarian  Veterinarian @relation(fields: [vetId], references: [id], onDelete: Cascade)
+    dayOfWeek     Int      
+    startTime     String   
+    endTime       String   
+    isAvailable   Boolean  @default(true)
+    createdAt     DateTime @default(now())
+    updatedAt     DateTime @updatedAt
+
+    @@unique([vetId, dayOfWeek])
+  }
+
+  model Pet {
+    id        String   @id @default(uuid())
+    ownerId   String
+    owner     Users    @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+    name      String
+    species   String
+    breed     String?
+    age       Int?
+    weight    Float?
+    imageUrl  String?
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    
+    appointments Appointment[]
+  }
+
+  model Service {
+    id          String   @id @default(uuid())
+    name        String   @unique
+    description String?  @db.Text
+    duration    Int      // in minutes
+    price       Decimal  @db.Decimal(10,2)
+    imageUrl    String?
+    isActive    Boolean  @default(true)
+    createdAt   DateTime @default(now())
+    updatedAt   DateTime @updatedAt
+    
+    appointments Appointment[]
+  }
+
+  model Appointment {
+    id            String   @id @default(uuid())
+    petId         String
+    pet           Pet      @relation(fields: [petId], references: [id], onDelete: Cascade)
+    serviceId     String
+    service       Service  @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+    vetId         String
+    veterinarian  Veterinarian @relation(fields: [vetId], references: [id], onDelete: Cascade)
+    date          DateTime
+    notes         String?  @db.Text
+    status        String   @default("scheduled")
+    cancellationReason String? @db.Text
+    createdAt     DateTime @default(now())
+    updatedAt     DateTime @updatedAt
+  }
+
+  model Order {
+    id                String      @id @default(uuid())
+    userId            String
+    user              Users       @relation(fields: [userId], references: [id], onDelete: Cascade)
+    status            String      @default("pending")
+    totalAmount       Decimal     @db.Decimal(10,2)
+    deliveryStatus    String      @default("pending")
+    deliveryAddress   String      @db.Text
+    cancellationReason String?    @db.Text
+    createdAt         DateTime    @default(now())
+    updatedAt         DateTime    @updatedAt
+    
+    items             OrderItem[]
+    transaction       Transaction?
+  }
+
+  model OrderItem {
+    id          String   @id @default(uuid())
+    orderId     String
+    order       Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+    productId   String
+    productName String
+    quantity    Int
+    unitPrice   Decimal  @db.Decimal(10,2)
+    totalPrice  Decimal  @db.Decimal(10,2)
+    createdAt   DateTime @default(now())
+  }
+
+  model Transaction {
+    id                String   @id @default(uuid())
+    orderId           String   @unique
+    order             Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+    paymentMethod     String   @default("esewa")
+    paymentStatus     String   @default("pending")
+    amount            Decimal  @db.Decimal(10,2)
+    currency          String   @default("NPR")
+    transactionId     String? 
+    referenceId       String? 
+    paymentDate       DateTime?
+    responseData      String?  @db.Text
+    createdAt         DateTime @default(now())
+    updatedAt         DateTime @updatedAt
+  }
+
+  model SupportChat {
+    id          String   @id @default(uuid())
+    userId      String
+    user        Users    @relation(fields: [userId], references: [id], onDelete: Cascade)
+    isResolved  Boolean  @default(false)
+    createdAt   DateTime @default(now())
+    updatedAt   DateTime @updatedAt
+    messages    SupportMessage[]
+  }
+
+  model SupportMessage {
+    id          String     @id @default(uuid())
+    chatId      String
+    chat        SupportChat @relation(fields: [chatId], references: [id], onDelete: Cascade)
+    senderId    String
+    sender      Users      @relation(fields: [senderId], references: [id], onDelete: Cascade)
+    content     String     @db.Text
+    isRead      Boolean    @default(false)
+    createdAt   DateTime   @default(now())
+  }
