@@ -77,14 +77,14 @@ const AdminDashboard: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           <StatsCard
             title="Total Revenue"
-            value={`$${Number(summary.totalRevenue).toLocaleString(undefined, {
+            value={`Rs.${Number(summary.totalRevenue).toLocaleString(undefined, {
               minimumFractionDigits: 2,
               maximumFractionDigits: 2,
             })}`}
           />
           <StatsCard
             title="Revenue This Month"
-            value={`$${Number(summary.revenueThisMonth).toLocaleString(
+            value={`Rs.${Number(summary.revenueThisMonth).toLocaleString(
               undefined,
               { minimumFractionDigits: 2, maximumFractionDigits: 2 }
             )}`}

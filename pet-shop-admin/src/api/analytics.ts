@@ -2,7 +2,7 @@ import { api } from "./api";
 
 export interface DashboardSummary {
   totalRevenue: number;
-  totalOrders: number;
+  totalOrders: number;  
   totalUsers: number;
   totalProducts: number;
   newUsersLast30Days: number;

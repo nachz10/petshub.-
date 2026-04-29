@@ -24,7 +24,7 @@ const SalesChart: React.FC<SalesChartProps> = ({ data }) => {
       <LineChart data={data}>
         <CartesianGrid strokeDasharray="3 3" />
         <XAxis dataKey="month" />
-        <YAxis tickFormatter={(value) => `$${value.toLocaleString()}`} />
+        <YAxis tickFormatter={(value) => `Rs ${value.toLocaleString()}`} />
         <Tooltip formatter={(value: number) => `$${value.toLocaleString()}`} />
         <Legend />
         <Line type="monotone" dataKey="sales" stroke="#8884d8" name="Sales" />

@@ -228,8 +228,8 @@ const CheckoutPage: React.FC = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <input
                   type="text"
-                  name="fullName"
-                  placeholder="Full Name"
+                  name="fullName" 
+                  placeholder="Full Name*"
                   value={deliveryAddress.fullName}
                   onChange={handleInputChange}
                   className="p-2 border rounded w-full"
@@ -238,7 +238,7 @@ const CheckoutPage: React.FC = () => {
                 <input
                   type="tel"
                   name="phone"
-                  placeholder="Phone Number"
+                  placeholder="Phone Number*"
                   value={deliveryAddress.phone}
                   onChange={handleInputChange}
                   className="p-2 border rounded w-full"
@@ -247,7 +247,7 @@ const CheckoutPage: React.FC = () => {
                 <input
                   type="text"
                   name="street"
-                  placeholder="Street Address"
+                  placeholder="Street Address*"
                   value={deliveryAddress.street}
                   onChange={handleInputChange}
                   className="p-2 border rounded w-full md:col-span-2"
@@ -256,7 +256,7 @@ const CheckoutPage: React.FC = () => {
                 <input
                   type="text"
                   name="city"
-                  placeholder="City"
+                  placeholder="City*"
                   value={deliveryAddress.city}
                   onChange={handleInputChange}
                   className="p-2 border rounded w-full"
@@ -265,7 +265,7 @@ const CheckoutPage: React.FC = () => {
                 <input
                   type="text"
                   name="state"
-                  placeholder="State/Province"
+                  placeholder="State/Province*"
                   value={deliveryAddress.state}
                   onChange={handleInputChange}
                   className="p-2 border rounded w-full"
@@ -274,7 +274,7 @@ const CheckoutPage: React.FC = () => {
                 <input
                   type="text"
                   name="zipCode"
-                  placeholder="Zip/Postal Code"
+                  placeholder="Zip/Postal Code*"
                   value={deliveryAddress.zipCode}
                   onChange={handleInputChange}
                   className="p-2 border rounded w-full"

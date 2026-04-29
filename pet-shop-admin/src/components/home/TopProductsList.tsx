@@ -25,7 +25,7 @@ const TopProductsList: React.FC<TopProductsListProps> = ({ products }) => {
             <div className="flex-1">
               <p className="font-medium">{product.productName}</p>
               <p className="text-sm text-gray-500">
-                Sold: {product.totalQuantitySold} units - Revenue: $
+                Sold: {product.totalQuantitySold} units - Revenue: Rs.
                 {Number(product.totalRevenueGenerated).toFixed(2)}
               </p>
             </div>
